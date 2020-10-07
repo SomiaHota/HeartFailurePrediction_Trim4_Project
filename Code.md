@@ -12,7 +12,31 @@ import io
 dataset = pd.read_csv(io.BytesIO(uploaded['heart_failure_clinical_records_dataset.csv'])) 
 print(dataset)
 dataset.head()
+# Data preprocessing
 dataset.isnull().sum()
+
+# Correlation
+data = dataset.iloc[:, 1:-1]
+corr = data.corr()
+corr.head()
+sns.heatmap(corr)
+# Feature Selection
+
+plt.rcParams['figure.figsize']=15,6 
+sns.set_style("darkgrid")
+
+x = dataset.iloc[:, :-1]
+y = dataset.iloc[:,-1]
+
+from sklearn.ensemble import ExtraTreesClassifier
+import matplotlib.pyplot as plt
+model = ExtraTreesClassifier()
+model.fit(x,y)
+print(model.feature_importances_) 
+feat_importances = pd.Series(model.feature_importances_, index=x.columns)
+feat_importances.nlargest(12).plot(kind='barh')
+plt.show()
+# Box Plots
 sns.boxplot(x = dataset.ejection_fraction, color = 'green')
 plt.show()
 dataset[dataset['ejection_fraction']>=70]
@@ -21,6 +45,9 @@ sns.boxplot(x=dataset.time, color = 'green')
 plt.show()
 sns.boxplot(x=dataset.serum_creatinine, color = 'green')
 plt.show()
+
+# Data Visualization using Plotly
+# Age vs Count
 import plotly.graph_objects as go
 
 fig = go.Figure()
@@ -46,6 +73,7 @@ fig.update_layout(
 )
 
 fig.show()
+# Age vs Death Event
 import plotly.express as px
 fig = px.histogram(dataset, x="age", color="DEATH_EVENT", hover_data=dataset.columns, 
                    title ="Distribution of AGE Vs DEATH_EVENT", 
@@ -54,6 +82,7 @@ fig = px.histogram(dataset, x="age", color="DEATH_EVENT", hover_data=dataset.col
                    color_discrete_map={"0": "RebeccaPurple", "1": "MediumPurple"}
                   )
 fig.show()
+# CREATININE PHOSPHOKINASE vs Count
 import plotly.graph_objects as go
 
 fig = go.Figure()
@@ -79,6 +108,8 @@ fig.update_layout(
 )
 
 fig.show()
+
+# CREATININE PHOSPHOKINASE vs Death Event
 import plotly.express as px
 fig = px.histogram(dataset, x="creatinine_phosphokinase", color="DEATH_EVENT", hover_data=dataset.columns,
                    title ="Distribution of CREATININE PHOSPHOKINASE Vs DEATH_EVENT", 
@@ -86,6 +117,8 @@ fig = px.histogram(dataset, x="creatinine_phosphokinase", color="DEATH_EVENT", h
                    template="plotly_dark",
                    color_discrete_map={"0": "RebeccaPurple", "1": "MediumPurple"})
 fig.show()
+
+# EJECTION FRACTION Vs DEATH_EVENT
 import plotly.express as px
 fig = px.histogram(dataset, x="ejection_fraction", color="DEATH_EVENT", hover_data=dataset.columns,
                    title ="Distribution of EJECTION FRACTION Vs DEATH_EVENT", 
@@ -93,11 +126,8 @@ fig = px.histogram(dataset, x="ejection_fraction", color="DEATH_EVENT", hover_da
                    template="plotly_dark",
                    color_discrete_map={"0": "RebeccaPurple", "1": "MediumPurple"})
 fig.show()
-dataset = pd.read_csv(io.BytesIO(uploaded['heart_failure_clinical_records_dataset.csv'])) 
-data = dataset.iloc[:, 1:-1]
-corr = data.corr()
-corr.head()
-sns.heatmap(corr)
+
+# Gender Vs DEATH_EVENT
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
@@ -131,6 +161,9 @@ fig.update_layout(
     autosize=False,width=1200, height=500, paper_bgcolor="white")
 
 fig.show()
+
+
+# Gender Vs Smoking
 from plotly.subplots import make_subplots
 
 d1 = dataset[(dataset["smoking"]==0) & (dataset["sex"]==1)]
@@ -155,6 +188,9 @@ fig.update_layout(
     autosize=False,width=1200, height=500, paper_bgcolor="white")
 
 fig.show()
+
+
+# Gender Vs Anaemia
 from plotly.subplots import make_subplots
 
 d1 = dataset[(dataset["anaemia"]==0) & (dataset["sex"]==1)]
@@ -179,6 +215,9 @@ fig.update_layout(
     autosize=False,width=1200, height=500, paper_bgcolor="white")
 
 fig.show()
+
+
+# High BP Vs Smoking
 from plotly.subplots import make_subplots
 
 d1 = dataset[(dataset["high_blood_pressure"]==0) & (dataset["smoking"]==1)]
@@ -209,6 +248,9 @@ fig.update_layout(
     autosize=False,width=1200, height=500, paper_bgcolor="white")
 
 fig.show()
+
+
+# Logistic Regression using entire Feature set for prediction of Death_Event
 x = dataset.iloc[:, :-1]
 y = dataset.iloc[:,-1]
 from sklearn.model_selection import train_test_split
@@ -229,6 +271,8 @@ ac = accuracy_score(y_test, y_pred)
 mylist1.append(ac)
 print(cm)
 print(ac)
+
+#  KNeighborsClassifier using entire Feature set for prediction of Death_Event
 x = dataset.iloc[:, :-1]
 y = dataset.iloc[:,-1]
 from sklearn.preprocessing import StandardScaler
@@ -255,6 +299,8 @@ ac = accuracy_score(y_test, y_pred)
 mylist1.append(ac)
 print(cm)
 print(ac)
+
+#  RandomForestClassifier using entire Feature set for prediction of Death_Event
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score
 list1 = []
@@ -278,6 +324,8 @@ ac = accuracy_score(y_test, y_pred)
 mylist1.append(ac)
 print(cm)
 print(ac)
+
+#  Plotting of Accuracy results of "Logistic Regression", "KNearestNeighbours","RandomForest" Classifiers for entire Feature set
 mylist1
 mylistnew = ["Logistic Regression", "KNearestNeighbours","RandomForest"]
 plt.rcParams['figure.figsize']=15,6 
@@ -293,17 +341,9 @@ for p in ax.patches:
     x, y = p.get_xy() 
     ax.annotate(f'{height:.2%}', (x + width/2, y + height*1.02), ha='center', fontsize = 'x-large')
 plt.show()
-x = dataset.iloc[:, :-1]
-y = dataset.iloc[:,-1]
 
-from sklearn.ensemble import ExtraTreesClassifier
-import matplotlib.pyplot as plt
-model = ExtraTreesClassifier()
-model.fit(x,y)
-print(model.feature_importances_) 
-feat_importances = pd.Series(model.feature_importances_, index=x.columns)
-feat_importances.nlargest(12).plot(kind='barh')
-plt.show()
+
+#  LOGISTIC REGRESSION with the 3 important features found out using ExtraTreesClassifier
 x = dataset.iloc[:, [4,7,11]]
 y = dataset.iloc[:,-1]
 from sklearn.preprocessing import StandardScaler
@@ -324,6 +364,8 @@ ac = accuracy_score(y_test, y_pred)
 mylist.append(ac)
 print(cm)
 print(ac)
+
+#  KNeighborsClassifier with the 3 important features found out using ExtraTreesClassifier
 x = dataset.iloc[:, [4,7,11]]
 y = dataset.iloc[:,-1]
 from sklearn.preprocessing import StandardScaler
@@ -350,6 +392,8 @@ ac = accuracy_score(y_test, y_pred)
 mylist.append(ac)
 print(cm)
 print(ac)
+
+#  RandomForestClassifier with the 3 important features found out using ExtraTreesClassifier
 x = dataset.iloc[:, [4,7,11]]
 y = dataset.iloc[:,-1]
 from sklearn.preprocessing import StandardScaler
@@ -379,6 +423,8 @@ ac = accuracy_score(y_test, y_pred)
 mylist.append(ac)
 print(cm)
 print(ac)
+
+#  Plotting of Accuracy results of "Logistic Regression", "KNearestNeighbours","RandomForest" Classifiers for the 3 important features found out using ExtraTreesClassifier
 mylist2 = ["Logistic Regression", "KNearestNeighbours","RandomForest"]
 plt.rcParams['figure.figsize']=15,6 
 sns.set_style("darkgrid")
