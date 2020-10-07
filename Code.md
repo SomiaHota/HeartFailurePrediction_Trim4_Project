@@ -148,7 +148,6 @@ fig.add_trace(go.Pie(labels=label1, values=values1, name="GENDER"),
 fig.add_trace(go.Pie(labels=label2, values=values2, name="GENDER VS DEATH_EVENT"),
               1, 2)
 
-# Use `hole` to create a donut-like pie chart
 fig.update_traces(hole=.4, hoverinfo="label+percent")
 
 
