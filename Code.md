@@ -313,11 +313,10 @@ for estimators in range(1,30):
 plt.plot(list(range(1,30)), list1)
 plt.show()
 from sklearn.ensemble import RandomForestClassifier
-classifier = RandomForestClassifier(n_estimators = 12, criterion='entropy', random_state=0)
+classifier = RandomForestClassifier(n_estimators = 11, criterion='entropy', random_state=0)
 classifier.fit(x_train,y_train)
 y_pred = classifier.predict(x_test)
 # Making the confusion matrix and calculating the accuracy score
-
 from sklearn.metrics import confusion_matrix, accuracy_score
 cm = confusion_matrix(y_test, y_pred)
 ac = accuracy_score(y_test, y_pred)
@@ -326,7 +325,6 @@ print(cm)
 print(ac)
 
 #  Plotting of Accuracy results of "Logistic Regression", "KNearestNeighbours","RandomForest" Classifiers for entire Feature set
-mylist1
 mylistnew = ["Logistic Regression", "KNearestNeighbours","RandomForest"]
 plt.rcParams['figure.figsize']=15,6 
 sns.set_style("darkgrid")
