@@ -16,7 +16,7 @@ dataset.head()
 dataset.isnull().sum()
 
 # Correlation
-data = dataset.iloc[:, 1:-1]
+data = dataset.iloc[:, 0:-1]
 corr = data.corr()
 corr.head()
 sns.heatmap(corr)
